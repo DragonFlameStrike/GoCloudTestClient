@@ -61,7 +61,6 @@ func main() {
 
 			defer resp.Body.Close()
 			resp_body, _ := ioutil.ReadAll(resp.Body)
-
 			fmt.Println(resp.Status)
 			fmt.Println(string(resp_body))
 		case UPDATE:
