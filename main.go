@@ -43,6 +43,7 @@ func main() {
 		case READ:
 			read(client, reader)
 		case UPDATE:
+			edit(client, reader)
 		case DELETE:
 		case EXIT:
 			return

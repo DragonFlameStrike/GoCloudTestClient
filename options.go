@@ -12,7 +12,7 @@ import (
 )
 
 func create(client *http.Client, reader *bufio.Reader) {
-	fmt.Println("\n You chose create option.\n" +
+	fmt.Print("\n You chose create option.\n" +
 		"You should to input filename like - data.json\n" +
 		"Or input filepath with filename like - ./content/data.json\n" +
 		"file shouldn't contain version\n" +
@@ -42,6 +42,8 @@ func create(client *http.Client, reader *bufio.Reader) {
 	rsp, _ := client.Do(req)
 	if rsp.StatusCode != http.StatusOK {
 		fmt.Printf("Request failed with response code: %d", rsp.StatusCode)
+	} else {
+		fmt.Println("The request has been sent")
 	}
 	return
 }
@@ -69,4 +71,41 @@ func read(client *http.Client, reader *bufio.Reader) {
 	resp_body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println(resp.Status)
 	fmt.Println(string(resp_body))
+}
+
+func edit(client *http.Client, reader *bufio.Reader) {
+	fmt.Print("\n You chose edit option.\n" +
+		"You should to input filename like - data.json\n" +
+		"Or input filepath with filename like - ./content/data.json\n" +
+		"file shouldn't contain version and should exist on server\n" +
+		"Filename: ")
+	text, _ := reader.ReadString('\n')
+	text = text[:len(text)-1]
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	fw, err := writer.CreateFormFile("file", text)
+	if err != nil {
+		return
+	}
+	file, err := os.Open(text)
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(fw, file)
+	if err != nil {
+		return
+	}
+	writer.Close()
+	req, err := http.NewRequest("PUT", "http://localhost:8080/config", bytes.NewReader(body.Bytes()))
+	if err != nil {
+		return
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	rsp, _ := client.Do(req)
+	if rsp.StatusCode != http.StatusOK {
+		fmt.Printf("Request failed with response code: %d", rsp.StatusCode)
+	} else {
+		fmt.Println("The request has been sent")
+	}
+	return
 }
