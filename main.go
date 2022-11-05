@@ -24,7 +24,7 @@ func main() {
 			"You should choose one of this option to continue\n" +
 			"1. Create config on server (You should to have config on your PC to upload it on server)\n" +
 			"2. Read config(-s)\n" +
-			"3. Update config\n" +
+			"3. Update config on server (You should to have config on your PC to update it on server)\n" +
 			"4. Delete config\n" +
 			"5. EXIT\n" +
 			"Input number : ")
