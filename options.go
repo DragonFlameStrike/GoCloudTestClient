@@ -51,7 +51,7 @@ func create(client *http.Client, reader *bufio.Reader) {
 func read(client *http.Client, reader *bufio.Reader) {
 	fmt.Println("\n You chose read option.\n" +
 		"If you want to see all configs on the server - press enter\n" +
-		"If you want to see config by service name - you should to input query like \"service=kuber\"")
+		"If you want to see config by service name - you should to input like \"service=kuber\"")
 	text, _ := reader.ReadString('\n')
 	text = text[:len(text)-1]
 	query := ""
@@ -108,4 +108,27 @@ func edit(client *http.Client, reader *bufio.Reader) {
 		fmt.Println("The request has been sent")
 	}
 	return
+}
+func delete(client *http.Client, reader *bufio.Reader) {
+	fmt.Println("\n You chose delete option.\n" +
+		"If you want to delete config by full name - you should to input like \"filename=data_v1.0.json\"")
+	text, _ := reader.ReadString('\n')
+	text = text[:len(text)-1]
+	query := ""
+	if text != "" {
+		query += "?" + text
+	}
+	req, _ := http.NewRequest("DELETE", "http://localhost:8080/config"+query, nil)
+	req.Header.Add("Accept", "application/json")
+	resp, err := client.Do(req)
+
+	if err != nil {
+		fmt.Println("Errored when sending request to the server")
+		return
+	}
+
+	defer resp.Body.Close()
+	resp_body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println(resp.Status)
+	fmt.Println(string(resp_body))
 }

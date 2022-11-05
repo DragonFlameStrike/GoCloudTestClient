@@ -45,6 +45,7 @@ func main() {
 		case UPDATE:
 			edit(client, reader)
 		case DELETE:
+			delete(client, reader)
 		case EXIT:
 			return
 		default:
