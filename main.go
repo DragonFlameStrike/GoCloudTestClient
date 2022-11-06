@@ -28,8 +28,7 @@ func main() {
 			"4. Delete config\n" +
 			"5. EXIT\n" +
 			"Input number : ")
-		text, _ := reader.ReadString('\n')
-		text = text[:len(text)-1]
+		text := readFromConsole(reader)
 		option, err := strconv.Atoi(text)
 		if err != nil {
 			fmt.Println("Bad input? Try again")
@@ -54,4 +53,13 @@ func main() {
 		}
 		_, _ = reader.ReadString('\n')
 	}
+}
+
+func readFromConsole(reader *bufio.Reader) string {
+	text, _ := reader.ReadString('\n')
+	text = text[:len(text)-1]
+	if text[len(text)-1] == '\r' {
+		text = text[:len(text)-1]
+	}
+	return text
 }

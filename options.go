@@ -17,8 +17,7 @@ func create(client *http.Client, reader *bufio.Reader) {
 		"Or input filepath with filename like - ./content/data.json\n" +
 		"file shouldn't contain version\n" +
 		"Filename: ")
-	text, _ := reader.ReadString('\n')
-	text = text[:len(text)-1]
+	text := readFromConsole(reader)
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	fw, err := writer.CreateFormFile("file", text)
@@ -52,13 +51,16 @@ func read(client *http.Client, reader *bufio.Reader) {
 	fmt.Println("\n You chose read option.\n" +
 		"If you want to see all configs on the server - press enter\n" +
 		"If you want to see config by service name - you should to input like \"service=kuber\"")
-	text, _ := reader.ReadString('\n')
-	text = text[:len(text)-1]
+	text := readFromConsole(reader)
 	query := ""
 	if text != "" {
 		query += "?" + text
 	}
-	req, _ := http.NewRequest("GET", "http://localhost:8080/config"+query, nil)
+	req, err := http.NewRequest("GET", "http://localhost:8080/config"+query, nil)
+	if err != nil {
+		fmt.Println("Errored when creating request")
+		return
+	}
 	req.Header.Add("Accept", "application/json")
 	resp, err := client.Do(req)
 
@@ -79,8 +81,7 @@ func edit(client *http.Client, reader *bufio.Reader) {
 		"Or input filepath with filename like - ./content/data.json\n" +
 		"file shouldn't contain version and should exist on server\n" +
 		"Filename: ")
-	text, _ := reader.ReadString('\n')
-	text = text[:len(text)-1]
+	text := readFromConsole(reader)
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	fw, err := writer.CreateFormFile("file", text)
@@ -112,8 +113,7 @@ func edit(client *http.Client, reader *bufio.Reader) {
 func delete(client *http.Client, reader *bufio.Reader) {
 	fmt.Println("\n You chose delete option.\n" +
 		"If you want to delete config by full name - you should to input like \"filename=data_v1.0.json\"")
-	text, _ := reader.ReadString('\n')
-	text = text[:len(text)-1]
+	text := readFromConsole(reader)
 	query := ""
 	if text != "" {
 		query += "?" + text
@@ -128,7 +128,7 @@ func delete(client *http.Client, reader *bufio.Reader) {
 	}
 
 	defer resp.Body.Close()
-	resp_body, _ := ioutil.ReadAll(resp.Body)
+	respBody, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println(resp.Status)
-	fmt.Println(string(resp_body))
+	fmt.Println(string(respBody))
 }
