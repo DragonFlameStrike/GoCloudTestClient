@@ -58,7 +58,7 @@ func main() {
 func readFromConsole(reader *bufio.Reader) string {
 	text, _ := reader.ReadString('\n')
 	text = text[:len(text)-1]
-	if text[len(text)-1] == '\r' {
+	if len(text) != 0 && text[len(text)-1] == '\r' {
 		text = text[:len(text)-1]
 	}
 	return text
